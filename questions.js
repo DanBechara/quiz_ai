@@ -38,7 +38,7 @@ const questions = [
     {
         type: "open",
         question: "Explique brevemente a diferença entre hardware e software no contexto de tecnologias multimédia",
-        answer: "O hardware refere-se aos componentes físicos de um sistema, como o computador, monitor, placa de som, microfone e outros dispositivos necessários para processar e exibir multimédia. O software, por outro lado, são os programas e aplicações que permitem a criação,edição e exibição de conteúdo multimédia, como editores de vídeo,reprodutores de áudio e programas gráficos."
+        answer: "O hardware refere-se aos componentes físicos de um sistema, como o computador, monitor, placa de som, microfone e outros dispositivos necessários para processar e exibir multimédia. O software, por outro lado, são os programas e aplicações que permitem a criação, edição e exibição de conteúdo multimédia, como editores de vídeo, reprodutores de áudio e programas gráficos."
     },
     {
         type: "multiple",
@@ -183,7 +183,7 @@ const questions = [
     {
         type: "open",
         question: "Qual é a função do formato GIF?",
-        answer: "GIF é um formato que suporta animações simples e transparência parcial. É comum em gráficos da web e imagens animadas curtas, embora tenha umapaleta de cores limitada (256 cores)."
+        answer: "GIF é um formato que suporta animações simples e transparência parcial. É comum em gráficos da web e imagens animadas curtas, embora tenha uma paleta de cores limitada (256 cores)."
     },
     {
         type: "multiple",
