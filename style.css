@@ -1,130 +1,230 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* Variáveis de tema */
+:root {
+    --background-color: #ffffff;
+    --text-color: #000000;
+    --button-color: #6c63ff;
+    --button-hover-color: #534dbd;
 }
 
+body.dark-theme {
+    --background-color: #1e1e1e;
+    --text-color: #ffffff;
+    --button-color: #4444cc;
+    --button-hover-color: #2222aa;
+}
+
+/* Aplicando variáveis */
 body {
-    font-family: 'Roboto', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: Arial, sans-serif;
     margin: 0;
-    background-color: #E3F2FD; /* Azul claro */
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Garante que o body cubra toda a tela */
+}
+
+#main-content {
+    flex: 1; /* Faz com que o conteúdo ocupe o espaço disponível */
+    display: flex;
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: center; /* Centraliza horizontalmente */
+    padding: 20px;
 }
 
 #quiz-container {
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    background: #ffffff;
+    max-width: 600px;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 1s ease;
-}
-
-h1 {
-    color: #1976D2; /* Azul mais escuro */
-    margin-bottom: 10px;
-}
-
-#question {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 15px;
+    border-radius: 10px;
+    text-align: center;
+    background-color: var(--background-color);
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.5s ease;
 }
 
 button {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    background-color: #1976D2;
-    color: #fff;
+    background-color: var(--button-color);
+    color: white;
     border: none;
     border-radius: 5px;
-    transition: background-color 0.3s ease;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 button:hover {
-    background-color: #1565C0;
+    background-color: var(--button-hover-color);
 }
 
-.option {
-    background-color: #64B5F6;
-    color: #333;
+/* Botão de alternância de tema */
+#theme-toggle {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+#toggle-theme {
+    font-size: 14px;
+}
+
+/* Mensagens de feedback */
+#feedback {
+    margin: 10px 0;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    display: none; /* Escondido por padrão */
+}
+
+#feedback.correct {
+    color: #28a745; /* Verde */
+}
+
+#feedback.incorrect {
+    color: #dc3545; /* Vermelho */
+}
+
+/* Footer fixado no final */
+footer {
+    text-align: center;
+    font-size: 14px;
+    margin-top: auto;
+    padding: 10px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border-top: 1px solid #ccc;
+}
+
+footer img {
+    vertical-align: middle;
+    margin: 0 5px;
+}
+
+/* Estilizando as caixas de seleção de "relacionar" */
+#options select {
+    width: 100%;
     padding: 10px;
     border-radius: 5px;
-    margin: 5px 0;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    border: 1px solid #ccc;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-size: 16px;
+    margin: 10px 0;
 }
 
-.option:hover {
-    background-color: #42A5F5;
+/* Alterando a transição nas respostas de imagens */
+#options img {
+    width: 100px;
+    height: auto;
+    margin: 5px;
+    transition: transform 0.3s;
 }
 
-#score {
-    font-size: 18px;
-    margin-top: 15px;
-    color: #333;
-    font-weight: bold;
+#options img:hover {
+    transform: scale(1.1);
 }
 
-#next-btn {
-    display: none;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
-}
-/* Botão correto */
-.correct {
-    background-color: green;
-    color: white;
-}
-
-/* Botão incorreto */
-.incorrect {
-    background-color: red;
-    color: white;
-}
-
-/* Footer minimalista */
-#footer {
-    position: fixed;
-    bottom: 0;
+/* Estilo para a pergunta aberta */
+textarea {
     width: 100%;
-    background-color: #f8f9fa; /* Fundo claro e neutro */
-    color: #6c757d; /* Texto em cinza suave */
-    text-align: center;
-    font-size: 12px;
-    padding: 5px 0;
-    border-top: 1px solid #dee2e6; /* Linha separadora sutil */
+    max-width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-size: 16px;
+    resize: none; /* Impede o redimensionamento */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 10px 0;
 }
 
-#footer p {
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px; /* Espaço entre texto e ícones */
+textarea::placeholder {
+    color: #aaa;
 }
 
-#footer a {
-    display: inline-block;
+/* Botão de envio para a pergunta aberta */
+#options button {
+    background-color: var(--button-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block;
+    margin: 20px auto;
 }
 
-#footer img {
-    vertical-align: middle;
-    transition: transform 0.3s ease; /* Animação ao passar o mouse */
+#options button:hover {
+    background-color: var(--button-hover-color);
 }
 
-#footer img:hover {
-    transform: scale(1.2); /* Aumenta levemente o ícone ao passar o mouse */
+/* Melhorando a responsividade */
+@media (max-width: 600px) {
+    #quiz-container {
+        width: 100%;
+        padding: 10px;
+    }
+    button {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
+/* Barra de progresso */
+#progress-container {
+    width: 100%;
+    background-color: #ccc;
+    height: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+#progress-bar {
+    height: 100%;
+    background-color: var(--button-color);
+    border-radius: 10px;
+    transition: width 0.3s;
+}
+
+/* Animação de entrada da direita para a esquerda */
+.slide-in-right {
+    animation: slide-in-right 0.5s forwards;
+}
+
+@keyframes slide-in-right {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Animação de saída da esquerda para a direita */
+.slide-out-left {
+    animation: slide-out-left 0.5s forwards;
+}
+
+@keyframes slide-out-left {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+/* Temporizador */
+#timer {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px 0;
 }
