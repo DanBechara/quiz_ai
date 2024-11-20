@@ -1,176 +1,261 @@
-import questions from './questions.js';
+// Alternar entre os temas claro e escuro
+function toggleTheme() {
+    document.body.classList.toggle("dark-theme");
+}
 
-
+// Funções principais do quiz
 let currentQuestionIndex = 0;
 let score = 0;
+let timeLeft = 60; // Atualiza o temporizador para 1 minuto (60 segundos)
+let timerInterval;
 
-document.addEventListener("DOMContentLoaded", startQuiz);
-
+// Função para iniciar o quiz
 function startQuiz() {
-    currentQuestionIndex = 0;
-    score = 0;
-    document.getElementById("next-btn").style.display = "none";
-    document.getElementById("score").innerText = "";
+    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("quiz-screen").style.display = "block";
     showQuestion();
+    startTimer();
 }
 
 function showQuestion() {
     const questionElement = document.getElementById("question");
-    const optionsContainer = document.getElementById("options");
-    const question = questions[currentQuestionIndex];
+    const optionsElement = document.getElementById("options");
+    const feedbackElement = document.getElementById("feedback");
 
-    questionElement.innerText = question.question;
-    optionsContainer.innerHTML = "";
+    // Adiciona a classe de animação para entrada
+    questionElement.className = 'slide-in-right';
+    optionsElement.className = 'slide-in-right';
 
-    if (question.type === "open") {
-        const input = document.createElement("input");
-        input.type = "text";
-        input.id = "open-answer";
-        input.placeholder = "Digite sua resposta";
-        input.classList.add("option");
-        optionsContainer.appendChild(input);
+    const currentQuestion = questions[currentQuestionIndex];
+    questionElement.textContent = currentQuestion.question;
 
-        // Adiciona evento para enviar a resposta com Enter
-        input.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                checkOpenAnswer();
-            }
-        });
+    feedbackElement.style.display = "none";
+    optionsElement.innerHTML = "";
 
-        input.focus();
-    } else if (question.type === "match") {
-        displayMatchQuestion(question);
-    } else {
-        question.options.forEach(option => {
+    if (currentQuestion.type === "multiple-choice") {
+        currentQuestion.options.forEach((option) => {
             const button = document.createElement("button");
-            button.className = "option";
-            button.innerText = option;
-            button.onclick = () => selectOption(button, option);
-            optionsContainer.appendChild(button);
+            button.textContent = option;
+            button.onclick = () => checkAnswer(option);
+            optionsElement.appendChild(button);
         });
+    } else if (currentQuestion.type === "match") {
+        const form = document.createElement("form");
+        currentQuestion.pairs.forEach(pair => {
+            const div = document.createElement("div");
+            div.classList.add("pair");
+
+            const questionLabel = document.createElement("label");
+            questionLabel.textContent = pair.question;
+
+            const select = document.createElement("select");
+            select.classList.add("match-select");
+            pair.options.forEach(option => {
+                const optionElement = document.createElement("option");
+                optionElement.value = option;
+                optionElement.textContent = option;
+                select.appendChild(optionElement);
+            });
+
+            div.appendChild(questionLabel);
+            div.appendChild(select);
+            form.appendChild(div);
+        });
+        const submitButton = document.createElement("button");
+        submitButton.textContent = "Enviar";
+        submitButton.type = "button";
+        submitButton.onclick = () => checkMatchAnswers(form);
+        form.appendChild(submitButton);
+        optionsElement.appendChild(form);
+    } else if (currentQuestion.type === "image") {
+        currentQuestion.options.forEach((imgSrc) => {
+            const imgElement = document.createElement("img");
+            imgElement.src = imgSrc;
+            imgElement.onclick = () => checkAnswer(imgSrc);
+            optionsElement.appendChild(imgElement);
+        });
+    } else if (currentQuestion.type === "open-ended") {
+        const textarea = document.createElement("textarea");
+        textarea.id = "open-ended-answer";
+        textarea.rows = 4;
+        textarea.cols = 50;
+        textarea.placeholder = "Digite sua resposta aqui...";
+
+        const submitButton = document.createElement("button");
+        submitButton.textContent = "Enviar";
+        submitButton.type = "button";
+        submitButton.onclick = checkOpenEndedAnswer;
+
+        optionsElement.appendChild(textarea);
+        optionsElement.appendChild(submitButton);
     }
+
+    updateProgress();
+    startTimer();
 }
 
-function displayMatchQuestion(question) {
-    const optionsContainer = document.getElementById("options");
+function checkOpenEndedAnswer() {
+    const answerElement = document.getElementById("open-ended-answer");
+    const answer = answerElement.value.trim().toLowerCase();
+    const currentQuestion = questions[currentQuestionIndex];
 
-    question.items.forEach(item => {
-        const itemDiv = document.createElement("div");
-        itemDiv.classList.add("match-item");
-        itemDiv.innerText = `${item.id}. ${item.text}`;
+    const isCorrect = answer === currentQuestion.correctAnswer.toLowerCase();
 
-        const select = document.createElement("select");
-        select.id = `match-${item.id}`;
-        select.classList.add("match-select");
-
-        const defaultOption = document.createElement("option");
-        defaultOption.value = "";
-        defaultOption.innerText = "Selecione...";
-        select.appendChild(defaultOption);
-
-        question.options.forEach(option => {
-            const optionElement = document.createElement("option");
-            optionElement.value = option.id;
-            optionElement.innerText = `${option.id}) ${option.text}`;
-            select.appendChild(optionElement);
-        });
-
-        itemDiv.appendChild(select);
-        optionsContainer.appendChild(itemDiv);
-    });
-
-    const submitBtn = document.createElement("button");
-    submitBtn.innerText = "Enviar";
-    submitBtn.className = "option";
-    submitBtn.onclick = checkMatchAnswer;
-    optionsContainer.appendChild(submitBtn);
-}
-
-function checkOpenAnswer() {
-    const question = questions[currentQuestionIndex];
-    const input = document.getElementById("open-answer");
-    const answer = input.value.trim();
-
-    if (answer.toLowerCase() === question.answer.toLowerCase()) {
+    if (isCorrect) {
         score++;
-        input.classList.add("correct");
-        alertFeedback("Correto!", "correct");
-    } else {
-        input.classList.add("incorrect");
-        alertFeedback("Errado!", "incorrect");
     }
 
-    setTimeout(nextQuestion, 1500);
+    showFeedback(isCorrect); // Exibe o feedback
+
+    setTimeout(() => {
+        slideOutCurrentQuestion();
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showFinalResult();
+            }
+        }, 500);
+    }, 1000);
 }
 
-function checkMatchAnswer() {
-    const question = questions[currentQuestionIndex];
-    let correct = true;
+function checkMatchAnswers(form) {
+    const selects = form.querySelectorAll(".match-select");
+    const currentQuestion = questions[currentQuestionIndex];
+    let isCorrect = true;
 
-    Object.keys(question.answer).forEach(id => {
-        const select = document.getElementById(`match-${id}`);
-        const selectedValue = select.value;
-
-        if (selectedValue === question.answer[id]) {
-            select.classList.add("correct");
-        } else {
-            select.classList.add("incorrect");
-            correct = false;
+    selects.forEach((select, index) => {
+        if (select.value !== currentQuestion.pairs[index].correctAnswer) {
+            isCorrect = false;
         }
     });
 
-    const submitBtn = document.querySelector("#options button");
-    if (correct) {
+    if (isCorrect) {
         score++;
-        submitBtn.classList.add("correct");
-        alertFeedback("Correto!", "correct");
-    } else {
-        submitBtn.classList.add("incorrect");
-        alertFeedback("Errado!", "incorrect");
     }
 
-    setTimeout(nextQuestion, 1500);
+    showFeedback(isCorrect); // Exibe o feedback
+
+    setTimeout(() => {
+        slideOutCurrentQuestion();
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showFinalResult();
+            }
+        }, 500);
+    }, 1000);
 }
 
-function selectOption(button, option) {
-    const question = questions[currentQuestionIndex];
+function checkAnswer(selectedOption) {
+    const currentQuestion = questions[currentQuestionIndex];
+    const isCorrect = selectedOption === currentQuestion.correctAnswer;
 
-    if (option === question.answer) {
+    // Somente adiciona classe aos botões de múltipla escolha e imagens
+    if (currentQuestion.type === "multiple-choice" || currentQuestion.type === "image") {
+        const selectedButton = Array.from(document.getElementsByTagName("button")).find(button => button.textContent === selectedOption) ||
+                               Array.from(document.getElementsByTagName("img")).find(img => img.src === selectedOption);
+        if (selectedButton) {
+            if (isCorrect) {
+                selectedButton.classList.add("correct");
+            } else {
+                selectedButton.classList.add("incorrect");
+            }
+        }
+    }
+
+    if (isCorrect) {
         score++;
-        button.classList.add("correct");
-        alertFeedback("Correto!", "correct");
-    } else {
-        button.classList.add("incorrect");
-        alertFeedback("Errado!", "incorrect");
     }
 
-    setTimeout(nextQuestion, 1500);
+    showFeedback(isCorrect); // Exibe o feedback
+
+    setTimeout(() => {
+        slideOutCurrentQuestion();
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showFinalResult();
+            }
+        }, 500);
+    }, 1000);
 }
 
-function nextQuestion() {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < questions.length) {
-        showQuestion();
+function showFeedback(isCorrect) {
+    const feedbackElement = document.getElementById("feedback");
+    feedbackElement.style.display = "block"; // Exibe o feedback
+    feedbackElement.textContent = isCorrect ? "Correto!" : "Errado!";
+    if (isCorrect) {
+        feedbackElement.className = "correct";
     } else {
-        showScore();
+        feedbackElement.className = "incorrect";
     }
 }
 
-function showScore() {
-    const totalQuestions = questions.length;
-    const percentageScore = ((score / totalQuestions) * 100).toFixed(2);
+function showFinalResult() {
+    const questionElement = document.getElementById("question");
+    const optionsElement = document.getElementById("options");
+    const resultElement = document.getElementById("result");
+    const feedbackElement = document.getElementById("feedback");
 
-    document.getElementById("question").innerText = "Fim do Quiz!";
-    document.getElementById("options").innerHTML = "";
-    document.getElementById("next-btn").style.display = "none";
-    document.getElementById("score").innerText = `Sua pontuação: ${score} de ${totalQuestions} (${percentageScore}%)`;
+    feedbackElement.style.display = "none"; // Esconde o feedback
+
+    const percentage = Math.round((score / questions.length) * 100);
+
+    questionElement.textContent = "Quiz Finalizado!";
+    optionsElement.innerHTML = "";
+    resultElement.innerHTML = `
+        <h1>QUIZ AI</h1>
+        <p>Pontuação: ${score}/${questions.length}</p>
+        <p>Porcentagem: ${percentage}%</p>
+        <p>Sua pontuação foi de ${score} pontos em um total de ${questions.length} questões.</p>
+    `;
 }
 
-function alertFeedback(message, status) {
-    const feedback = document.createElement("p");
-    feedback.innerText = message;
-    feedback.className = status;
-    document.getElementById("options").appendChild(feedback);
+function slideOutCurrentQuestion() {
+    const questionElement = document.getElementById("question");
+    const optionsElement = document.getElementById("options");
 
-    setTimeout(() => feedback.remove(), 1000);
+    // Adiciona a classe de animação para saída
+    questionElement.className = 'slide-out-left';
+    optionsElement.className = 'slide-out-left';
 }
+
+function updateProgress() {
+    const progressBar = document.getElementById("progress-bar");
+    const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+    progressBar.style.width = progress + "%";
+}
+
+function startTimer() {
+    timeLeft = 60; // Atualiza o temporizador para 1 minuto (60 segundos)
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById("time-left").textContent = timeLeft;
+        if (timeLeft === 0) {
+            clearInterval(timerInterval);
+            showFeedback(false);
+            setTimeout(() => {
+                slideOutCurrentQuestion();
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < questions.length) {
+                        showQuestion();
+                    } else {
+                        showFinalResult();
+                    }
+                }, 500);
+            }, 1000);
+        }
+    }, 1000);
+}
+
+// Inicializa o quiz
+document.getElementById("start-screen").style.display = "block"; // Exibe a tela inicial
+document.getElementById("quiz-screen").style.display = "none"; // Esconde a tela do quiz
