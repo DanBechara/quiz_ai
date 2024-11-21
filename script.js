@@ -6,7 +6,7 @@ function toggleTheme() {
 // Funções principais do quiz
 let currentQuestionIndex = 0;
 let score = 0;
-let timeLeft = 60; // Atualiza o temporizador para 1 minuto (60 segundos)
+let timeLeft = 120; // Atualiza o temporizador para 1 minuto (60 segundos)
 let timerInterval;
 
 // Função para iniciar o quiz
@@ -212,8 +212,8 @@ function showFinalResult() {
     resultElement.innerHTML = `
         <h1>QUIZ AI</h1>
         <p>Pontuação: ${score}/${questions.length}</p>
-        <p>Porcentagem: ${percentage}%</p>
-        <p>Sua pontuação foi de ${score} pontos em um total de ${questions.length} questões.</p>
+        <p>Percentagem: ${percentage}%</p>
+        <p>A sua pontuação foi de ${score} pontos num total de ${questions.length} questões.</p>
     `;
 }
 
@@ -233,7 +233,7 @@ function updateProgress() {
 }
 
 function startTimer() {
-    timeLeft = 60; // Atualiza o temporizador para 1 minuto (60 segundos)
+    timeLeft = 120; // Atualiza o temporizador para 1 minuto (60 segundos)
     clearInterval(timerInterval);
     timerInterval = setInterval(() => {
         timeLeft--;
