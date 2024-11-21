@@ -1,6 +1,6 @@
 const questions = [
     {
-        question: "Escolha a imagem que corresponde uma realidade virtual",
+        question: "Escolha a imagem que corresponde a um exemplo de realidade virtual",
         type: "image",
         options: [
             "https://goodstorage.com.br/wp-content/uploads/2024/02/setup-gamer-scaled.jpg",
@@ -25,7 +25,7 @@ const questions = [
         question: "Qual das alternativas é um exemplo de realidade imersiva que utiliza a interatividade para criar uma experiência envolvente?",
         type: "multiple-choice",
         options: [
-            "A) Navegar por um site de turismo em 3D com um mouse. ",
+            "A) Navegar por um site de turismo em 3D com um rato. ",
             "B) Usar um headset de realidade virtual para explorar uma cidade digital, como se estivesse realmente lá.",
             "C) Assistir a um documentário em 360°, sem interação. ",
             "D) Usar um aplicativo de mapas em 2D para navegar numa cidade. "
@@ -57,7 +57,7 @@ const questions = [
     },
     { question: "Explique brevemente a diferença entre hardware e software no contexto de tecnologias multimédia. ", 
     type: "open-ended",
-    correctAnswer: "O hardware refere-se aos componentes físicos de um sistema, como o  computador, monitor, placa de som, microfone e outros dispositivos necessários para processar e exibir multimédia. O software, por outro lado, são os programas e aplicações que permitem a criação, edição e exibição de conteúdo multimédia, como editores de vídeo, reprodutores de áudio e programas gráficos. " 
+    correctAnswer: "O hardware refere-se aos componentes físicos de um sistema, como o computador, monitor, placa de som, microfone e outros dispositivos necessários para processar e exibir multimédia. O software, por outro lado, são os programas e aplicações que permitem a criação, edição e exibição de conteúdo multimédia, como editores de vídeo, reprodutores de áudio e programas gráficos." 
     },
     {
         question: "Indique se as seguintes afirmações sobre multimédia são verdadeiras (V) ou falsas (F):",
@@ -239,7 +239,7 @@ const questions = [
             "B) SVG",
             "C) EPS"
         ],
-        correctAnswer: "A)JPEG"
+        correctAnswer: "A) JPEG"
     },
     {
         question: "Qual é a vantagem principal das imagens vetoriais?",
@@ -265,9 +265,9 @@ const questions = [
         type: "match",
         pairs: [
             { question: "A resolução de uma imagem se refere ao número total de pixels que ela contém.", 
-            options: ["(V)Verdadeiro", 
+            options: ["(V)Verdadeira", 
             "(F)Falso"],
-            correctAnswer: "(V)Verdadeiro" },
+            correctAnswer: "(V)Verdadeira" },
         ]
     },
     {
@@ -278,7 +278,7 @@ const questions = [
             "B) A resolução da imagem",
             "C) O número de bits que representa a cor de cada pixel"
         ],
-        correctAnswer: "C) O número de bits que representa a cor de cada pixel "
+        correctAnswer: "C) O número de bits que representa a cor de cada pixel"
     },
     {
     question: "Quantas cores uma profundidade de 8 bits permite? ",
